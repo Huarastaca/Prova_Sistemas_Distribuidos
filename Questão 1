@@ -1,0 +1,43 @@
+# a) Exemplo de arquivo YAML para implantar a aplicação utilizando Docker Compose:
+
+version: '3.8'
+services:
+  product_page:
+    image: python:3.8
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+    command: python product_server.py
+
+  reviews-v1:
+    image: java:8
+    command: java -jar reviews-v1.jar
+
+  reviews-v2:
+    image: java:8
+    command: java -jar reviews-v2.jar
+
+  reviews-v3:
+    image: java:8
+    command: java -jar reviews-v3.jar
+
+  ratings:
+    image: node:14
+    command: node ratings_server.js
+
+  details:
+    image: ruby:2.7
+    command: ruby details_server.rb
+
+# b) Adicionando uma ferramenta de geração de carga, como Locust:
+
+  locust:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./locustfile.py:/locustfile.py
+    command: -f /locustfile.py --host http://product_page:5000
+
+
